@@ -7,13 +7,13 @@ export default function Read() {
   const params = useParams();  // React.use() 제거
   const id = params.id;
 
-  const [topic, setTopic] = useState<{ title: string; body: string } | null>(null);
+  const [topic, setTopic] = useState<{ title: string; user_name: string; created_at: string; } | null>(null);
 
   useEffect(() => {
     async function fetchTopic() {
       if (!id) return;
 
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}topics/${id}`, {
+      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}posts/${id}`, {
         cache: 'no-store'
       });
       const data = await resp.json();
@@ -28,7 +28,8 @@ export default function Read() {
   return (
     <>
       <h2>{topic.title}</h2>
-      <p>{topic.body}</p>
+      <h2>{topic.user_name}</h2>
+      <p>{topic.created_at}</p>
     </>
   );
 }

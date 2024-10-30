@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // API URL과 캐싱 설정을 통해 topics 데이터 가져오기
-  const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}topics`, {
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}posts/list`, {
     cache: 'no-store', // 매번 최신 데이터를 가져오도록 캐싱 비활성화
   });
   const topics = await resp.json();
@@ -19,9 +19,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <h1><Link href="/">WEB</Link></h1>
         <ol>
-          {topics.map((topic: { id: string; title: string }) => (
-            <li key={topic.id}>
-              <Link href={`/read/${topic.id}`}>{topic.title}</Link>
+          {topics.data.map((topic: { _id: string; title: string }) => (
+            <li key={topic._id}>
+              <Link href={`/read/${topic._id}`}>{topic.title}</Link>
             </li>
           ))}
         </ol>
