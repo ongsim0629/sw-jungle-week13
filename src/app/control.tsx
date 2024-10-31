@@ -1,14 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useAtom } from "jotai";
 import { useState } from "react";
+import { topicsAtom } from "./atoms";
 
 export function Control() {
   const router = useRouter();
   const params = useParams();
   const id = params.id;
-
-  // 비밀번호 상태 관리
+  const [topics, setTopics] = useAtom(topicsAtom); // Atom을 가져옵니다.
   const [password, setPassword] = useState("");
 
   const handleDelete = async () => {
@@ -19,13 +20,13 @@ export function Control() {
 
     try {
       const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}posts`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json', // JSON 형식으로 요청 본문을 보냄
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          post_id: id,           // 삭제할 포스트의 ID
-          user_password: password, // 입력받은 비밀번호
+          post_id: id,
+          user_password: password,
         }),
       });
 
@@ -33,8 +34,11 @@ export function Control() {
         throw new Error(`Failed to delete topic with ID: ${id}`);
       }
 
-      // 삭제 성공 후 홈으로 리디렉션
-      router.push('/');
+      // 삭제 성공 후 topicsAtom에서 해당 토픽 삭제
+      setTopics((prevTopics) => prevTopics.filter((topic) => topic._id !== id));
+
+      // 홈으로 리디렉션
+      router.push("/");
       router.refresh();
       console.log("삭제 성공");
     } catch (error) {
@@ -54,16 +58,13 @@ export function Control() {
             <Link href={`/update/${id}`}>update</Link>
           </li>
           <li>
-            {/* 비밀번호 입력 필드 추가 */}
             <input
               type="password"
               placeholder="비밀번호 입력"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // 비밀번호 상태 업데이트
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={handleDelete}>
-              delete
-            </button>
+            <button onClick={handleDelete}>delete</button>
           </li>
         </>
       ) : null}
