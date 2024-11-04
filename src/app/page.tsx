@@ -1,5 +1,6 @@
 'use client';
 
+import type { Playlist } from './atoms';
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import { playlistsAtom, selectedPlaylistAtom } from './atoms';
@@ -11,7 +12,7 @@ export default function Playlist() {
   const [playlists] = useAtom(playlistsAtom);
   const [, setSelectedPlaylist] = useAtom(selectedPlaylistAtom);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [localPlaylists, setLocalPlaylists] = useState<Playlist[]>([]);
+  const [localPlaylists, setLocalPlaylists] = useState([] as Playlist[]);
 
   useEffect(() => {
     setLocalPlaylists(playlists);
@@ -75,14 +76,20 @@ export default function Playlist() {
                   style={{ width: "24px", cursor: "pointer" }}
                 />
               </Link>
-              <img 
-                src="/delete.png" 
-                alt="삭제" 
-                onClick={(e) => handleDelete(playlist.id, e)}
-                disabled={isDeleting}
-                className="action-icon"
-                style={{ width: "24px", cursor: "pointer" }}
-              />
+              <img src="/delete.png" 
+              alt="삭제" 
+              onClick={(e) => {
+                if (!isDeleting) {
+                  handleDelete(playlist.id, e);
+                }
+              }}
+              className="action-icon"
+              style={{ 
+                width: "24px", 
+                cursor: isDeleting ? "not-allowed" : "pointer",
+                opacity: isDeleting ? 0.5 : 1 
+                }}
+                />
             </div>
           </div>
         ))
