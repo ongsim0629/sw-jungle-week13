@@ -61,7 +61,7 @@ export default function Playlist() {
             <h3 className="card-title">{playlist.title}</h3>
             <p className="card-channel">{playlist.channelName}</p>
             <div className="card-actions">
-            <Link href={`/playlists/${playlist.id}/edit`}>
+            <Link href={`/update/${playlist.id}`}>
       <Image 
         src="/update.png"
         width={24}
@@ -78,7 +78,6 @@ export default function Playlist() {
       height={24}
       alt="삭제"
       onClick={(e) => handleDelete(playlist.id, e)}
-      className="action-icon hover:opacity-80 transition-opacity"
       priority={false}
       style={{ width: '24px', height: 'auto', cursor: 'pointer' }} 
     />
