@@ -216,6 +216,10 @@ form button[type="submit"] {
   transition: background-color 0.3s;
 }
 
+form button[type="submit"]:hover {
+  background-color: rgb(253, 195, 195);
+}
+
 form button[type="button"] {
   width: 100%; 
   padding: 12px; 
