@@ -10,20 +10,16 @@ export default function Update() {
   const params = useParams();
   const id = params?.id as string;
 
-  const [playlists, setPlaylists] = useAtom(playlistsAtom);
+  const [, setPlaylists] = useAtom(playlistsAtom); // Remove unused `playlists` variable
+
   const [formData, setFormData] = useState({
     title: '',
     channelName: '',
     thumbnail: ''
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchPlaylistData();
-    }
-  }, [id]);
-
-  async function fetchPlaylistData() {
+  // Fetch playlist data
+  const fetchPlaylistData = async () => {
     try {
       const res = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${id}`, {
         method: 'GET',
@@ -40,10 +36,16 @@ export default function Update() {
       } else {
         alert("Failed to fetch playlist data");
       }
-    } catch (err) {
-      alert(`Error fetching playlist:${error}`);
+    } catch (error) {
+      alert(`Error fetching playlist: ${error}`);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchPlaylistData();
+    }
+  }, [id, fetchPlaylistData]); // Add `fetchPlaylistData` to dependencies
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -72,7 +74,7 @@ export default function Update() {
         alert("Failed to update playlist");
       }
     } catch (error) {
-      alert(`Error updating playlist:${error}`);
+      alert(`Error updating playlist: ${error}`);
     }
   };
 
