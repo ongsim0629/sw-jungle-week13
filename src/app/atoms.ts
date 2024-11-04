@@ -1,11 +1,12 @@
 import { atom } from 'jotai';
 
-interface Topic {
-  _id: string;
+export interface Playlist {
+  id: string;
   title: string;
-  content?: string;
-  user_name?: string;
-  created_at?: string;
+  channelName: string;
+  thumbnail: string;
 }
 
-export const topicsAtom = atom<Topic[]>([]);
+export const playlistsAtom = atom<Playlist[]>([]);
+export const selectedPlaylistAtom = atom<Playlist | null>(null);
+export const isPlayingAtom = atom(false);
