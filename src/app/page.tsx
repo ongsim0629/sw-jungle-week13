@@ -26,7 +26,11 @@ export default function Playlist() {
       // Jotai atom 상태 업데이트
       setPlaylists((prev) => prev.filter((playlist) => playlist.id !== playlistId));
     } catch (error) {
-      alert(error.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('알 수 없는 오류가 발생했습니다.');
+      }
     }
   };
 
