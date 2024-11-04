@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { Playlist } from './atoms';
 import { useAtom } from 'jotai';
 import { playlistsAtom, selectedPlaylistAtom, deletePlaylistAtom } from './atoms';
@@ -60,24 +61,27 @@ export default function Playlist() {
             <h3 className="card-title">{playlist.title}</h3>
             <p className="card-channel">{playlist.channelName}</p>
             <div className="card-actions">
-              <Link 
-                href={`/update/${playlist.id}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <img 
-                  src="/update.png" 
-                  alt="수정" 
-                  className="action-icon" 
-                  style={{ width: "24px", cursor: "pointer" }}
-                />
-              </Link>
-              <img 
-                src="/delete.png" 
-                alt="삭제" 
-                onClick={(e) => handleDelete(playlist.id, e)}
-                className="action-icon"
-                style={{ width: "24px", cursor: "pointer" }}
-              />
+            <Link href={`/playlists/${playlist.id}/edit`}>
+      <Image 
+        src="/update.png"
+        width={24}
+        height={24}
+        alt="수정"
+        className="action-icon hover:opacity-80 transition-opacity"
+        priority={false}
+        style={{ width: '24px', height: 'auto', cursor: 'pointer'}}
+      />
+    </Link>
+    <Image 
+      src="/delete.png"
+      width={24}
+      height={24}
+      alt="삭제"
+      onClick={(e) => handleDelete(playlist.id, e)}
+      className="action-icon hover:opacity-80 transition-opacity"
+      priority={false}
+      style={{ width: '24px', height: 'auto', cursor: 'pointer' }} 
+    />
             </div>
           </div>
         ))
