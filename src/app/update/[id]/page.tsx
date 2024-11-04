@@ -10,7 +10,7 @@ export default function Update() {
   const params = useParams();
   const id = params?.id as string;
 
-  const [, setPlaylists] = useAtom(playlistsAtom); // Remove unused `playlists` variable
+  const [, setPlaylists] = useAtom(playlistsAtom);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -19,33 +19,32 @@ export default function Update() {
   });
 
   // Fetch playlist data
-  const fetchPlaylistData = async () => {
-    try {
-      const res = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${id}`, {
-        method: 'GET',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (res.ok) {
-        const playlist = await res.json();
-        setFormData({
-          title: playlist.title || '',
-          channelName: playlist.channelName || '',
-          thumbnail: playlist.thumbnail || ''
-        });
-      } else {
-        alert("Failed to fetch playlist data");
-      }
-    } catch (error) {
-      alert(`Error fetching playlist: ${error}`);
-    }
-  };
-
   useEffect(() => {
-    if (id) {
-      fetchPlaylistData();
-    }
-  }, [id, fetchPlaylistData]); // Add `fetchPlaylistData` to dependencies
+    const fetchPlaylistData = async () => {
+      if (id) {
+        try {
+          const res = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${id}`, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (res.ok) {
+            const playlist = await res.json();
+            setFormData({
+              title: playlist.title || '',
+              channelName: playlist.channelName || '',
+              thumbnail: playlist.thumbnail || ''
+            });
+          } else {
+            alert("Failed to fetch playlist data");
+          }
+        } catch (error) {
+          alert(`Error fetching playlist: ${error}`);
+        }
+      }
+    };
+    fetchPlaylistData();
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,10 +65,11 @@ export default function Update() {
       });
 
       if (resp.ok) {
+        // 플레이리스트 상태 업데이트
         setPlaylists(prevPlaylists => prevPlaylists.map(
           playlist => playlist.id === id ? { ...playlist, ...formData } : playlist
         ));
-        router.push('/');
+        router.push('/'); // 업데이트 후 홈으로 이동
       } else {
         alert("Failed to update playlist");
       }
