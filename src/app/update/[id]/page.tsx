@@ -41,7 +41,7 @@ export default function Update() {
         alert("Failed to fetch playlist data");
       }
     } catch (err) {
-      alert("Error fetching playlist:");
+      alert(`Error fetching playlist:${error}`);
     }
   }
 
@@ -72,7 +72,7 @@ export default function Update() {
         alert("Failed to update playlist");
       }
     } catch (error) {
-      alert("Error updating playlist:");
+      alert(`Error updating playlist:${error}`);
     }
   };
 

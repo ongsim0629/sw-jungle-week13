@@ -15,7 +15,7 @@ export default function Create() {
       const data = await res.json();
       return data.items[0]?.snippet;
     } catch (err) {
-      alert('url에서 정보를 추출하는 과정에서 문제가 발생했습니다.');
+      alert(`${err}`);
       return null;
     }
   };
@@ -81,7 +81,7 @@ export default function Create() {
       router.push('/');
       router.refresh();
     } catch (error) {
-      alert('영상을 추가하는데 오류가 발생했어요');
+      alert(`영상을 추가하는데 오류가 발생했어요${error}`);
     }
   };
 
