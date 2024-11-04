@@ -36,6 +36,7 @@ export default function Playlist() {
 
       setTimeout(() => {
         router.push('/');
+        router.refresh();
       }, 200);
     } finally {
       setIsDeleting(false);
