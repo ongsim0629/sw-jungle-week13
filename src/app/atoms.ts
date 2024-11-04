@@ -5,6 +5,7 @@ export interface Playlist {
   title: string;
   channelName: string;
   thumbnail: string;
+  url: string;
 }
 
 export const playlistsAtom = atom<Playlist[]>([]);
