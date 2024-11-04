@@ -64,7 +64,7 @@ export default function Create() {
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists`, {
+      const res = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

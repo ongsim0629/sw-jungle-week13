@@ -23,7 +23,7 @@ export default function Playlist() {
 
     try {
       setIsDeleting(true);
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists/${playlistId}`, {
+      const resp = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${playlistId}`, {
         method: 'DELETE',
       });
 

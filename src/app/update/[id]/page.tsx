@@ -25,7 +25,7 @@ export default function Update() {
 
   async function fetchPlaylistData() {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists/${id}`, {
+      const res = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${id}`, {
         method: 'GET',
         cache: 'no-cache',
         headers: { 'Content-Type': 'application/json' },
@@ -57,7 +57,7 @@ export default function Update() {
     evt.preventDefault();
 
     try {
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists/${id}`, {
+      const resp = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
