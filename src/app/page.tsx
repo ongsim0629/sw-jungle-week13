@@ -1,13 +1,11 @@
 'use client';
 
 import type { Playlist } from './atoms';
-import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import { playlistsAtom, selectedPlaylistAtom } from './atoms';
 import Link from 'next/link';
 
 export default function Playlist() {
-  const router = useRouter();
   const [playlists, setPlaylists] = useAtom(playlistsAtom);
   const [, setSelectedPlaylist] = useAtom(selectedPlaylistAtom);
 
