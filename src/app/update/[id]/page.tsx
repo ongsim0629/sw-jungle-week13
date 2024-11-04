@@ -1,103 +1,119 @@
 'use client';
+
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { topicsAtom } from '@/app/atoms';
+import { playlistsAtom } from '../../atoms';
 
 export default function Update() {
   const router = useRouter();
-  const params = useParams();  
-  const id = params.id;
+  const params = useParams();
+  const id = params?.id as string;
 
-  const [topics, setTopics] = useAtom(topicsAtom); // Atom을 가져옵니다.
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [password, setPassword] = useState('');
+  const [playlists, setPlaylists] = useAtom(playlistsAtom);
+  const [formData, setFormData] = useState({
+    title: '',
+    channelName: '',
+    thumbnail: ''
+  });
 
-  // 데이터 가져오기
   useEffect(() => {
-    async function fetchTopic() {
-      if (!id) return;
-
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}posts/${id}`, {
-        cache: 'no-cache',
-      });
-      const topic = await resp.json();
-      setTitle(topic.title);
-      setBody(topic.body);
+    if (id) {
+      fetchPlaylistData();
     }
-
-    fetchTopic();
   }, [id]);
 
-  return (
-    <form onSubmit={async (evt) => {
-      evt.preventDefault();
-      const title = evt.target.title.value;
-      const body = evt.target.body.value;
-
-      if (!password) {
-        alert("비밀번호를 입력하세요.");
-        return;
+  async function fetchPlaylistData() {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists/${id}`, {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        const playlist = await res.json();
+        setFormData({
+          title: playlist.title || '',
+          channelName: playlist.channelName || '',
+          thumbnail: playlist.thumbnail || ''
+        });
+      } else {
+        alert("Failed to fetch playlist data");
       }
+    } catch (err) {
+      alert("Error fetching playlist:");
+    }
+  }
 
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}posts`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          post_id: id,
-          title,
-          content: body,
-          user_password: password,
-        }),
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    try {
+      const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}playlists/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
       if (resp.ok) {
-        const updatedTopic = await resp.json();
-        console.log("Updated topic:", updatedTopic);
-
-        // Atom에서 주제를 업데이트
-        setTopics((prevTopics) =>
-          prevTopics.map((topic) => (topic._id === id ? updatedTopic : topic))
-        );
-
-        router.push(`/read/${id}`);
-        router.refresh();
+        setPlaylists(prevPlaylists => prevPlaylists.map(
+          playlist => playlist.id === id ? { ...playlist, ...formData } : playlist
+        ));
+        router.push('/');
       } else {
-        console.error("Failed to update topic");
+        alert("Failed to update playlist");
       }
-    }}>
-      <h2>Update</h2>
-      <p>
-        <input 
-          type="text" 
-          name="title" 
-          placeholder="title" 
-          onChange={e => setTitle(e.target.value)} 
-          value={title} 
+    } catch (error) {
+      alert("Error updating playlist:");
+    }
+  };
+
+  return (
+    <form id="updateForm" onSubmit={handleSubmit}>
+      <h2>UPDATE</h2>
+      <div id="updateInput">
+        <input
+          placeholder="Title"
+          id="title"
+          name="title"
+          type="text"
+          value={formData.title}
+          onChange={handleChange}
+          required
         />
-      </p>
-      <p>
-        <textarea 
-          name="body" 
-          placeholder="body" 
-          onChange={e => setBody(e.target.value)} 
-          value={body} 
+      </div>
+      <div id="updateInput">
+        <input
+          placeholder="Channel Name"
+          id="channelName"
+          name="channelName"
+          type="text"
+          value={formData.channelName}
+          onChange={handleChange}
+          required
         />
-      </p>
-      <p>
-        <input 
-          type="password" 
-          placeholder="비밀번호 입력" 
-          onChange={e => setPassword(e.target.value)} 
-          value={password} 
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <input
+          placeholder="Thumbnail URL"
+          id="thumbnail"
+          name="thumbnail"
+          type="text"
+          value={formData.thumbnail}
+          onChange={handleChange}
+          required
         />
-      </p>
-      <p>
-        <input type="submit" value="update" />
-      </p>
+      </div>
+      <button type="submit">업데이트</button>
+      <button type="button" onClick={() => router.push('/')}>취소</button>
     </form>
   );
 }
