@@ -2,6 +2,7 @@ import Link from 'next/link';
 import './globals.css';
 import { PlaylistsProvider } from './playlistsProvider';
 import YouTubeControl from './YotubeControl';
+import Sidebar from './sidebar';  // 새로 만들 컴포넌트
 
 export const metadata = {
   title: 'Music Player For Youtube',
@@ -17,25 +18,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head />
       <body>
         <div id="container">
-          <aside>
-            <h2>
-              <Link href="/">Music Player</Link>
-            </h2>
-            <h3>Playlists</h3>
-            <ul>
-              {playlists.map((playlist: { id: string; title: string }, index: number) => (
-                <li key={playlist.id}>
-                  <span>{index + 1}.</span> {playlist.title}
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main>
-            <PlaylistsProvider initialPlaylists={playlists}>
+          <PlaylistsProvider initialPlaylists={playlists}>
+            <Sidebar />
+            <main>
               {children}
-            </PlaylistsProvider>
-          </main>
+            </main>
+          </PlaylistsProvider>
         </div>
 
         <footer>
