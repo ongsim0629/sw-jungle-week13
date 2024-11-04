@@ -2,15 +2,20 @@
 
 import type { Playlist } from './atoms';
 import { useAtom } from 'jotai';
-import { playlistsAtom, selectedPlaylistAtom } from './atoms';
+import { playlistsAtom, selectedPlaylistAtom, deletePlaylistAtom } from './atoms';
 import Link from 'next/link';
 
 export default function Playlist() {
-  const [playlists, setPlaylists] = useAtom(playlistsAtom);
+  const [playlists] = useAtom(playlistsAtom);
   const [, setSelectedPlaylist] = useAtom(selectedPlaylistAtom);
+  const [, deletePlaylist] = useAtom(deletePlaylistAtom);
 
   const handleDelete = async (playlistId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (!confirm('정말 삭제하시겠습니까?')) {
+      return;
+    }
 
     try {
       const resp = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${playlistId}`, {
@@ -21,8 +26,8 @@ export default function Playlist() {
         throw new Error('삭제에 실패했습니다');
       }
 
-      // Jotai atom 상태 업데이트
-      setPlaylists((prev) => prev.filter((playlist) => playlist.id !== playlistId));
+      // Jotai action을 통한 상태 업데이트
+      deletePlaylist(playlistId);
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
