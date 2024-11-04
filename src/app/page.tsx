@@ -5,25 +5,16 @@ import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import { playlistsAtom, selectedPlaylistAtom } from './atoms';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export default function Playlist() {
   const router = useRouter();
-  const [playlists] = useAtom(playlistsAtom);
+  const [playlists, setPlaylists] = useAtom(playlistsAtom);
   const [, setSelectedPlaylist] = useAtom(selectedPlaylistAtom);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [localPlaylists, setLocalPlaylists] = useState([] as Playlist[]);
-
-  useEffect(() => {
-    setLocalPlaylists(playlists);
-  }, [playlists]);
 
   const handleDelete = async (playlistId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isDeleting) return;
 
     try {
-      setIsDeleting(true);
       const resp = await fetch(`https://sunrise-abalone-fireplace.glitch.me/playlists/${playlistId}`, {
         method: 'DELETE',
       });
@@ -32,14 +23,10 @@ export default function Playlist() {
         throw new Error('삭제에 실패했습니다');
       }
 
-      setLocalPlaylists((prev) => prev.filter((playlist) => playlist.id !== playlistId));
-
-      setTimeout(() => {
-        router.push('/');
-        router.refresh();
-      }, 200);
-    } finally {
-      setIsDeleting(false);
+      // Jotai atom 상태 업데이트
+      setPlaylists((prev) => prev.filter((playlist) => playlist.id !== playlistId));
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -49,8 +36,8 @@ export default function Playlist() {
 
   return (
     <div className="card-list">
-      {localPlaylists.length > 0 ? (
-        localPlaylists.map((playlist) => (
+      {playlists.length > 0 ? (
+        playlists.map((playlist) => (
           <div 
             key={playlist.id} 
             className="card"
@@ -77,20 +64,13 @@ export default function Playlist() {
                   style={{ width: "24px", cursor: "pointer" }}
                 />
               </Link>
-              <img src="/delete.png" 
-              alt="삭제" 
-              onClick={(e) => {
-                if (!isDeleting) {
-                  handleDelete(playlist.id, e);
-                }
-              }}
-              className="action-icon"
-              style={{ 
-                width: "24px", 
-                cursor: isDeleting ? "not-allowed" : "pointer",
-                opacity: isDeleting ? 0.5 : 1 
-                }}
-                />
+              <img 
+                src="/delete.png" 
+                alt="삭제" 
+                onClick={(e) => handleDelete(playlist.id, e)}
+                className="action-icon"
+                style={{ width: "24px", cursor: "pointer" }}
+              />
             </div>
           </div>
         ))
