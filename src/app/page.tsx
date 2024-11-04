@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import { playlistsAtom, selectedPlaylistAtom } from './atoms';
 import Link from 'next/link';
-import { useEffect } from 'react';
 
 export default function Playlist() {
   const router = useRouter();
