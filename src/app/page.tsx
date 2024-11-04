@@ -36,8 +36,6 @@ export default function Playlist() {
       setTimeout(() => {
         router.push('/');
       }, 200);
-    } catch (error) {
-      alert('플레이리스트 삭제에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsDeleting(false);
     }
